@@ -27,7 +27,7 @@
   set architecture i8086
   target remote :1234
   ```
-    接入qemu开始调试。
+  接入qemu开始调试。
   - 需要注意在第一中断时pc寄存器的值是无效的，此时中断地址应为0xfffffff0，反汇编此处代码会发现是执行了一条长跳转指令，之后便可使用`si`进行单步调试，为方便观测可输入如下代码使得每次执行一条一句之后自动反汇编下一条执行的语句
     ```
     define hook-stop
@@ -36,23 +36,23 @@
     ```
 2. 在初始化位置0x7c00设置实地址断点,测试断点正常。
   - gdb中输入命令
-    ```
-    b *0x7c00
-    c
-    ```
+  ```
+  b *0x7c00
+  c
+  ```
     程序停在0x7c00处，断点正常，输入命令`x /10i $pc`得到如下结果：
-    ```
-    => 0x7c00:	cli    
-       0x7c01:	cld    
-       0x7c02:	xor    %ax,%ax
-       0x7c04:	mov    %ax,%ds
-       0x7c06:	mov    %ax,%es
-       0x7c08:	mov    %ax,%ss
-       0x7c0a:	in     $0x64,%al
-       0x7c0c:	test   $0x2,%al
-       0x7c0e:	jne    0x7c0a
-       0x7c10:	mov    $0xd1,%al
-    ```
+  ```
+  => 0x7c00:	cli    
+     0x7c01:	cld    
+     0x7c02:	xor    %ax,%ax
+     0x7c04:	mov    %ax,%ds
+     0x7c06:	mov    %ax,%es
+     0x7c08:	mov    %ax,%ss
+     0x7c0a:	in     $0x64,%al
+     0x7c0c:	test   $0x2,%al
+     0x7c0e:	jne    0x7c0a
+     0x7c10:	mov    $0xd1,%al
+  ```
 3. 从0x7c00开始跟踪代码运行,将单步跟踪反汇编得到的代码与bootasm.S和 bootblock.asm进行比较。
   - qemu运行时增加参数`-d in_asm -D code.s`，从code.s中获取运行的反汇编代码，其中从0x7c00开始的代码如下:
     ```
