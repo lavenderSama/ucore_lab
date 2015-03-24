@@ -110,7 +110,8 @@
   IN: 
   0x00007c45:  mov    $0x7c00,%esp
   0x00007c4a:  call   0x7cd1
-  ...
+  
+  ----------------
   ```
     与bootasm.S和bootblock.asm中的对应代码片段相同
 4. 自己找一个bootloader或内核中的代码位置，设置断点并进行测试。
