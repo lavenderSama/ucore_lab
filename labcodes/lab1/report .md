@@ -1,22 +1,22 @@
 # Lab1 report
 
 ## [练习1] 理解通过make生成执行文件的过程
-> [练习1.1] 操作系统镜像文件 ucore.img 是如何一步一步生成的?(需要比较详细地解释 Makefile 中
+### [练习1.1] 操作系统镜像文件 ucore.img 是如何一步一步生成的?(需要比较详细地解释 Makefile 中
 每一条相关命令和命令参数的含义,以及说明命令导致的结果)
 > 生成ucore.img的相关语句为
-```
-$(UCOREIMG): $(kernel) $(bootblock)
-	$(V)dd if=/dev/zero of=$@ count=10000
-	$(V)dd if=$(bootblock) of=$@ conv=notrunc
-	$(V)dd if=$(kernel) of=$@ seek=1 conv=notrunc
-```
-其中根据定义UCOREIMG=bin/ucore.img
-执行bin/ucore.img需要先生成bin/kernel和bin/bootblock
-生成过程如下：
+  ```
+  $(UCOREIMG): $(kernel) $(bootblock)
+  	$(V)dd if=/dev/zero of=$@ count=10000
+  	$(V)dd if=$(bootblock) of=$@ conv=notrunc
+  	$(V)dd if=$(kernel) of=$@ seek=1 conv=notrunc
+  ```
+  其中根据定义UCOREIMG=bin/ucore.img
+  执行bin/ucore.img需要先生成bin/kernel和bin/bootblock
+  生成过程如下：
     - 首先生成一个以0填充的10000个块的文件bin/ucore.img，每个块大小为512字节
     - 用bin/bootblock填充第一个块，采用不截短文件的设置
     - 用bin/kernel填充从第二个块开始的块，采用不截短文件的设置
-> [练习1.2] 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么?
+### [练习1.2] 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么?
 > - 大小为512字节
   - 最后两个字节的值为0x55AA
 
@@ -195,12 +195,12 @@ ebp:0xf000ff53 eip:0xf000ff53 args:0x00000000 0x00000000 0x00000000 0x00000000
 ```
 
 ## [练习6] 完善中断初始化和处理
-> [练习6.1] 中断向量表中一个表项占多少字节？其中哪几位代表中断处理代码的入口？
-> > 中断向量表一个表项占用8字节，其中2-3字节是段选择子，0-1字节和6-7字节分别为偏移的低16位和高16位，两者共构成中断处理程序的入口地址。
+### [练习6.1] 中断向量表中一个表项占多少字节？其中哪几位代表中断处理代码的入口？
+> 中断向量表一个表项占用8字节，其中2-3字节是段选择子，0-1字节和6-7字节分别为偏移的低16位和高16位，两者共构成中断处理程序的入口地址。
 
-> [练习6.2] 请编程完善kern/trap/trap.c中对中断向量表进行初始化的函数idt_init。
-> > 见代码
+### [练习6.2] 请编程完善kern/trap/trap.c中对中断向量表进行初始化的函数idt_init。
+> 见代码
 
-> [练习6.3] 请编程完善trap.c中的中断处理函数trap，在对时钟中断进行处理的部分填写trap函数
-> > 见代码
+### [练习6.3] 请编程完善trap.c中的中断处理函数trap，在对时钟中断进行处理的部分填写trap函数
+> 见代码
 
