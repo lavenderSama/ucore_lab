@@ -66,16 +66,13 @@
   0x00007c04:  mov    %ax,%ds
   0x00007c06:  mov    %ax,%es
   0x00007c08:  mov    %ax,%ss
-  
   ----------------
   IN: 
   0x00007c0a:  in     $0x64,%al
-  
   ----------------
   IN: 
   0x00007c0c:  test   $0x2,%al
   0x00007c0e:  jne    0x7c0a
-  
   ----------------
   IN: 
   0x00007c10:  mov    $0xd1,%al
@@ -83,7 +80,6 @@
   0x00007c14:  in     $0x64,%al
   0x00007c16:  test   $0x2,%al
   0x00007c18:  jne    0x7c14
-  
   ----------------
   IN: 
   0x00007c1a:  mov    $0xdf,%al
@@ -92,30 +88,24 @@
   0x00007c23:  mov    %cr0,%eax
   0x00007c26:  or     $0x1,%eax
   0x00007c2a:  mov    %eax,%cr0
-  
   ----------------
   IN: 
   0x00007c2d:  ljmp   $0x8,$0x7c32
-  
   ----------------
   IN: 
   0x00007c32:  mov    $0x10,%ax
   0x00007c36:  mov    %eax,%ds
-  
   ----------------
   IN: 
   0x00007c38:  mov    %eax,%es
-  
   ----------------
   IN: 
   0x00007c3a:  mov    %eax,%fs
   0x00007c3c:  mov    %eax,%gs
   0x00007c3e:  mov    %eax,%ss
-  
   ----------------
   IN: 
   0x00007c40:  mov    $0x0,%ebp
-  
   ----------------
   IN: 
   0x00007c45:  mov    $0x7c00,%esp
