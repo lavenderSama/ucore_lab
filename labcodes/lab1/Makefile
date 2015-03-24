@@ -267,3 +267,14 @@ tags:
 	$(V)find . -type f -name "*.[chS]" >cscope.files
 	$(V)cscope -bq 
 	$(V)ctags -L cscope.files
+
+INS := 	set architecture i8086 \
+	target remote :1234 \
+	break kern_init \
+	continue
+
+gdbDebug: $(UCOREIMG)
+	$(V)$(QEMU) -S -s -serial mon:stdio -hda $< -nographic &
+	$(V)sleep 2
+	$(V)$(TERMINAL) -e "gdb -q -x $(INS)"
+
