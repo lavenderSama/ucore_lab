@@ -22,109 +22,109 @@
 
 ## [练习2] 使用qemu执行并调试lab1中的软件。（要求在报告中简要写出练习过程）
 1. 从CPU加电后执行的第一条指令开始，单步跟踪BIOS的执行。
-  > 打开两个终端，其中一个执行`qemu -S -s -hda bin/ucore.img`，开启qemu并进入等待gdb的状态，
-  另一个打开gdb后执行
-  ```
-  set architecture i8086
-  target remote :1234
-  ```
-  接入qemu开始调试。
-    需要注意在第一中断时pc寄存器的值是无效的，此时中断地址应为0xfffffff0，反汇编此处代码会发现是执行了一条长跳转指令，之后便可使用`si`进行单步调试，为方便观测可输入如下代码使得每次执行一条一句之后自动反汇编下一条执行的语句
-  ```
-  define hook-stop
-  x /i $pc
-  end
-  ```
+    > 打开两个终端，其中一个执行`qemu -S -s -hda bin/ucore.img`，开启qemu并进入等待gdb的状态，
+    另一个打开gdb后执行
+    ```
+    set architecture i8086
+    target remote :1234
+    ```
+    接入qemu开始调试。
+      需要注意在第一中断时pc寄存器的值是无效的，此时中断地址应为0xfffffff0，反汇编此处代码会发现是执行了一条长跳转指令，之后便可使用`si`进行单步调试，为方便观测可输入如下代码使得每次执行一条一句之后自动反汇编下一条执行的语句
+    ```
+    define hook-stop
+    x /i $pc
+    end
+    ```
 2. 在初始化位置0x7c00设置实地址断点,测试断点正常。
-  > gdb中输入命令
-  ```
-  b *0x7c00
-  c
-  ```
-  程序停在0x7c00处，断点正常，输入命令`x /10i $pc`得到如下结果：
-  ```
-  => 0x7c00:	cli    
-     0x7c01:	cld    
-     0x7c02:	xor    %ax,%ax
-     0x7c04:	mov    %ax,%ds
-     0x7c06:	mov    %ax,%es
-     0x7c08:	mov    %ax,%ss
-     0x7c0a:	in     $0x64,%al
-     0x7c0c:	test   $0x2,%al
-     0x7c0e:	jne    0x7c0a
-     0x7c10:	mov    $0xd1,%al
-  ```
+    gdb中输入命令
+    ```
+    b *0x7c00
+    c
+    ```
+    程序停在0x7c00处，断点正常，输入命令`x /10i $pc`得到如下结果：
+    ```
+    => 0x7c00:	cli    
+       0x7c01:	cld    
+       0x7c02:	xor    %ax,%ax
+       0x7c04:	mov    %ax,%ds
+       0x7c06:	mov    %ax,%es
+       0x7c08:	mov    %ax,%ss
+       0x7c0a:	in     $0x64,%al
+       0x7c0c:	test   $0x2,%al
+       0x7c0e:	jne    0x7c0a
+       0x7c10:	mov    $0xd1,%al
+    ```
 3. 从0x7c00开始跟踪代码运行,将单步跟踪反汇编得到的代码与bootasm.S和 bootblock.asm进行比较。
-  > qemu运行时增加参数`-d in_asm -D code.s`，从code.s中获取运行的反汇编代码，其中从0x7c00开始的代码如下:
-  ```
-  IN: 
-  0x00007c00:  cli
-  ----------------
-  IN: 
-  0x00007c01:  cld    
-  0x00007c02:  xor    %ax,%ax
-  0x00007c04:  mov    %ax,%ds
-  0x00007c06:  mov    %ax,%es
-  0x00007c08:  mov    %ax,%ss
-  ----------------
-  IN: 
-  0x00007c0a:  in     $0x64,%al
-  ----------------
-  IN: 
-  0x00007c0c:  test   $0x2,%al
-  0x00007c0e:  jne    0x7c0a
-  ----------------
-  IN: 
-  0x00007c10:  mov    $0xd1,%al
-  0x00007c12:  out    %al,$0x64
-  0x00007c14:  in     $0x64,%al
-  0x00007c16:  test   $0x2,%al
-  0x00007c18:  jne    0x7c14
-  ----------------
-  IN: 
-  0x00007c1a:  mov    $0xdf,%al
-  0x00007c1c:  out    %al,$0x60
-  0x00007c1e:  lgdtw  0x7c6c
-  0x00007c23:  mov    %cr0,%eax
-  0x00007c26:  or     $0x1,%eax
-  0x00007c2a:  mov    %eax,%cr0
-  ----------------
-  IN: 
-  0x00007c2d:  ljmp   $0x8,$0x7c32
-  ----------------
-  IN: 
-  0x00007c32:  mov    $0x10,%ax
-  0x00007c36:  mov    %eax,%ds
-  ----------------
-  IN: 
-  0x00007c38:  mov    %eax,%es
-  ----------------
-  IN: 
-  0x00007c3a:  mov    %eax,%fs
-  0x00007c3c:  mov    %eax,%gs
-  0x00007c3e:  mov    %eax,%ss
-  ----------------
-  IN: 
-  0x00007c40:  mov    $0x0,%ebp
-  ----------------
-  IN: 
-  0x00007c45:  mov    $0x7c00,%esp
-  0x00007c4a:  call   0x7cd1
-  
-  ----------------
-  ```
+    qemu运行时增加参数`-d in_asm -D code.s`，从code.s中获取运行的反汇编代码，其中从0x7c00开始的代码如下:
+    ```
+    IN: 
+    0x00007c00:  cli
+    ----------------
+    IN: 
+    0x00007c01:  cld    
+    0x00007c02:  xor    %ax,%ax
+    0x00007c04:  mov    %ax,%ds
+    0x00007c06:  mov    %ax,%es
+    0x00007c08:  mov    %ax,%ss
+    ----------------
+    IN: 
+    0x00007c0a:  in     $0x64,%al
+    ----------------
+    IN: 
+    0x00007c0c:  test   $0x2,%al
+    0x00007c0e:  jne    0x7c0a
+    ----------------
+    IN: 
+    0x00007c10:  mov    $0xd1,%al
+    0x00007c12:  out    %al,$0x64
+    0x00007c14:  in     $0x64,%al
+    0x00007c16:  test   $0x2,%al
+    0x00007c18:  jne    0x7c14
+    ----------------
+    IN: 
+    0x00007c1a:  mov    $0xdf,%al
+    0x00007c1c:  out    %al,$0x60
+    0x00007c1e:  lgdtw  0x7c6c
+    0x00007c23:  mov    %cr0,%eax
+    0x00007c26:  or     $0x1,%eax
+    0x00007c2a:  mov    %eax,%cr0
+    ----------------
+    IN: 
+    0x00007c2d:  ljmp   $0x8,$0x7c32
+    ----------------
+    IN: 
+    0x00007c32:  mov    $0x10,%ax
+    0x00007c36:  mov    %eax,%ds
+    ----------------
+    IN: 
+    0x00007c38:  mov    %eax,%es
+    ----------------
+    IN: 
+    0x00007c3a:  mov    %eax,%fs
+    0x00007c3c:  mov    %eax,%gs
+    0x00007c3e:  mov    %eax,%ss
+    ----------------
+    IN: 
+    0x00007c40:  mov    $0x0,%ebp
+    ----------------
+    IN: 
+    0x00007c45:  mov    $0x7c00,%esp
+    0x00007c4a:  call   0x7cd1
+    
+    ----------------
+    ```
     与bootasm.S和bootblock.asm中的对应代码片段相同
 4. 自己找一个bootloader或内核中的代码位置，设置断点并进行测试。
-  > 使用命令`b *0x7c1e`在模式转换处设置断点,得到代码如下
-  ```
-  (gdb) x /5i $pc
-  => 0x7c1e:	lgdtw  0x7c6c
-     0x7c23:	mov    %cr0,%eax
-     0x7c26:	or     $0x1,%eax
-     0x7c2a:	mov    %eax,%cr0
-     0x7c2d:	ljmp   $0x8,$0x7c32
-  ```
-  和模式切换的代码一致
+    > 使用命令`b *0x7c1e`在模式转换处设置断点,得到代码如下
+    ```
+    (gdb) x /5i $pc
+    => 0x7c1e:	lgdtw  0x7c6c
+       0x7c23:	mov    %cr0,%eax
+       0x7c26:	or     $0x1,%eax
+       0x7c2a:	mov    %eax,%cr0
+       0x7c2d:	ljmp   $0x8,$0x7c32
+    ```
+    和模式切换的代码一致
 
 ## [练习3] 分析bootloader 进入保护模式的过程。
   - 首先准备环境，将ax、ds、es和ss清零
