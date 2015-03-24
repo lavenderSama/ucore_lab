@@ -21,8 +21,9 @@ $(UCOREIMG): $(kernel) $(bootblock)
   - 最后两个字节的值为0x55AA
 
 ## [练习2] 使用qemu执行并调试lab1中的软件。（要求在报告中简要写出练习过程）
+>
 1. 从CPU加电后执行的第一条指令开始，单步跟踪BIOS的执行。
-打开两个终端，其中一个执行`qemu -S -s -hda bin/ucore.img`，开启qemu并进入等待gdb的状态，
+> 打开两个终端，其中一个执行`qemu -S -s -hda bin/ucore.img`，开启qemu并进入等待gdb的状态，
 另一个打开gdb后执行
 ```
 set architecture i8086
