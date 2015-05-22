@@ -23,6 +23,7 @@ work(unsigned int times) {
     cprintf("pid %d is running (%d times)!.\n", getpid(), times);
 
     while (times -- > 0) {
+//	cprintf("pid %d is running (%d times)!.\n", getpid(), times);
         for (i = 0; i < size; i ++) {
             for (j = 0; j < size; j ++) {
                 matc[i][j] = 0;
